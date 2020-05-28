@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:db="http://www.mulesoft.org/schema/mule/db"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<db:config name="Database_Config" doc:name="Database Config" doc:id="0def378a-6138-4ca6-82c7-639b5b181689" >
+		<db:my-sql-connection host="64.227.37.97" port="3306" user="njclabs" password="training" database="nrs" />
+	</db:config>
+	<flow name="implementationFlow" doc:id="d817af9a-8e87-4b1c-9bd4-2b076c78df1b" >
+		<db:select doc:name="Select" doc:id="ab4bf2ee-ca64-4fb7-9f43-f712d7c8dab0" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM test;]]></db:sql>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="41cb8089-6cb3-417f-a19e-7b9853087a90" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+payload]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="8dfd798b-937a-46f1-8906-b1c40e1797dd" message="#[payload]"/>
+	</flow>
+</mule>
