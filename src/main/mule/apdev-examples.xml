@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:http="http://www.mulesoft.org/schema/mule/http" xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd">
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="e2a83807-bfe8-4518-823e-654a5d104580" >
+		<http:listener-connection host="0.0.0.0" port="8081" />
+	</http:listener-config>
+	<http:request-config name="HTTP_Request_configuration" doc:name="HTTP Request configuration" doc:id="be8e42c7-eaf8-4884-8c59-88373b9b268a" >
+		<http:request-connection host="localhost" port="8081" />
+	</http:request-config>
+	<flow name="helloFlow" doc:id="180dfb2f-a719-4f99-8e40-31d63fbae07a" >
+		<http:listener doc:name="GET /hello" doc:id="d9af4ab4-32bc-4b5e-85a5-de26b26b7d5d" config-ref="HTTP_Listener_config" path="/hello" allowedMethods="GET">
+			<http:response reasonPhrase="Success" >
+				<http:headers ><![CDATA[#[output application/java
+---
+{
+	"name" : "Max"
+}]]]></http:headers>
+			</http:response>
+		</http:listener>
+		<set-payload value="Hello" doc:name="Hello" doc:id="a64f0552-3dfa-422d-9756-8838764a0d29" />
+		<http:request method="GET" doc:name="GET /goodbye" doc:id="bfe91147-7644-4e46-af90-afe2fb8be0f4" config-ref="HTTP_Request_configuration" path="/goodbye" responseTimeout="300000">
+			<http:query-params ><![CDATA[#[output application/java
+---
+{
+	"fullname" : "Max Mule"
+}]]]></http:query-params>
+		</http:request>
+		<logger level="INFO" doc:name="Logger" doc:id="04b89354-08e5-4a23-91fb-eb5f1ba1a41f" />
+	</flow>
+	<flow name="GoodbyeFlow" doc:id="62cd50ec-3a55-4637-846b-f693db0e7f42" >
+		<http:listener doc:name="GET /goodbye" doc:id="68e87208-8249-42ad-8685-c233d0a8747d" config-ref="HTTP_Listener_config" path="/goodbye" allowedMethods="GET"/>
+		<set-payload value="Goodbye" doc:name="Goodbye" doc:id="e2972bbd-7876-4e98-a5aa-876181d81155" />
+		<logger level="INFO" doc:name="Logger" doc:id="f1eba073-117a-4ffe-bcf6-29a6afed12ca" />
+	</flow>
+</mule>
