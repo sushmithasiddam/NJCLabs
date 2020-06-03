@@ -10,7 +10,7 @@ http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/
 	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="7c901bc4-6cec-4f71-a3fb-f3a7ce323e44" >
 		<http:listener-connection host="0.0.0.0" port="${http.port}" />
 	</http:listener-config>
-	<american-flights-api:config name="American_Flights_API_Config" doc:name="American Flights API Config" doc:id="f8597056-34ac-46cf-9cb7-616316b157cd" property_host="$(american.host}" property_port="${american.port}" property_protocol="${american.protocol}" property_basePath="${american.basepath}" />
+	<american-flights-api:config name="American_Flights_API_Config" doc:name="American Flights API Config" doc:id="f8597056-34ac-46cf-9cb7-616316b157cd" property_host="${american.host}" property_port="${american.port}" property_protocol="${american.protocol}" property_basePath="${american.basepath}" />
 	<http:request-config name="HTTP_Request_config_training" doc:name="HTTP Request configuration" doc:id="5773eaee-09cb-48a2-8804-1f67fcd9849a" basePath="${training.basepath}" >
 		<http:request-connection host="${training.host}" port="${training.port}" />
 	</http:request-config>
