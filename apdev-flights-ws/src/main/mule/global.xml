@@ -8,7 +8,7 @@ http://www.mulesoft.org/schema/mule/american-flights-api http://www.mulesoft.org
 http://www.mulesoft.org/schema/mule/wsc http://www.mulesoft.org/schema/mule/wsc/current/mule-wsc.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
 	<configuration-properties doc:name="Configuration properties" doc:id="723c4ca5-1120-4b1d-b5c2-0ab0423eb6ee" file="config.yaml" />
-	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="7c901bc4-6cec-4f71-a3fb-f3a7ce323e44" >
+	<http:listener-config name="HTTP_Listener_config" doc:name="HTTP Listener config" doc:id="9e42d10e-35d7-4c56-8507-38dfdbbd40c5">
 		<http:listener-connection host="0.0.0.0" port="${http.port}" />
 	</http:listener-config>
 	<american-flights-api:config name="American_Flights_API_Config" doc:name="American Flights API Config" doc:id="f8597056-34ac-46cf-9cb7-616316b157cd" property_host="${american.host}" property_port="${american.port}" property_protocol="${american.protocol}" property_basePath="${american.basepath}" />
@@ -25,7 +25,7 @@ http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/
 	</wsc:config>
 	<configuration doc:name="Configuration" doc:id="7801a751-f9a9-460d-8eec-70c2e2b05b73" defaultErrorHandler-ref="globalError_Handler" />
 	<error-handler name="globalError_Handler" doc:id="9f1341e0-3f1d-4546-b18f-f7b99b34d01a" >
-		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9e42d10e-35d7-4c56-8507-38dfdbbd40c5" type="APP:INVALID_DESTINATION">
+		<on-error-continue enableNotifications="true" logException="true" doc:name="On Error Continue" doc:id="9e42d10e-35d7-4c56-8507-38dfdbbd40c5" type="ANY">
 				<ee:transform doc:name="error.description" doc:id="0146e511-28f6-45ee-bb20-d6e7f81b2a63" >
 					<ee:message >
 						<ee:set-payload ><![CDATA[%dw 2.0
