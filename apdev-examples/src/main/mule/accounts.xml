@@ -11,15 +11,55 @@ http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/cu
 http://www.mulesoft.org/schema/mule/batch http://www.mulesoft.org/schema/mule/batch/current/mule-batch.xsd
 http://www.mulesoft.org/schema/mule/os http://www.mulesoft.org/schema/mule/os/current/mule-os.xsd
 http://www.mulesoft.org/schema/mule/jms http://www.mulesoft.org/schema/mule/jms/current/mule-jms.xsd">
-	<flow name="receiveJMSMessages" doc:id="12f0dc6d-e407-47e1-bfe0-cab0f5bdd55f" initialState="stopped">
+	<flow name="receiveJMSMessages" doc:id="12f0dc6d-e407-47e1-bfe0-cab0f5bdd55f">
 		<jms:listener doc:name="JMS accountsQ" doc:id="ba13a5c2-e420-4cb8-87d6-c6608c0af63c" config-ref="JMS_Config" destination="accountsQ">
 			<jms:consumer-type >
 				<jms:queue-consumer />
 			</jms:consumer-type>
 		</jms:listener>
+		<ee:transform doc:name="JSON to Accounts" doc:id="0926351d-f911-4d23-bc29-04a5e86eaf0b" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/java
+---
+payload map ( payload01 , indexOfPayload01 ) -> {
+    Name: payload01.name,
+    BillingStreet: payload01.street,
+    BillingCity: (payload01.city default ""),
+    BillingState: payload01.state,
+    BillingPostalCode: payload01.postal,
+    BillingCountry: payload01.country
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<batch:job jobName="syncWithSalesforce" doc:id="aef8b894-3f80-46ac-8ae3-2977411b5a5e" >
+			<batch:process-records >
+				<batch:step name="isAccountInSalesforce" doc:id="8750cb35-4534-45fd-8620-6a742062d7bc" >
+					<salesforce:query doc:name="Account" doc:id="e39c86bd-f9c9-444f-82bb-69d2b2022646" config-ref="Salesforce_Config" target="exists" targetValue="#[sizeOf(payload as Array) &gt; 0]">
+						<salesforce:salesforce-query ><![CDATA[SELECT Name FROM Account
+WHERE Name = ':cname']]></salesforce:salesforce-query>
+						<salesforce:parameters ><![CDATA[#[output application/java
+---
+{
+	"cname" : payload.Name default "" as String
+}]]]></salesforce:parameters>
+					</salesforce:query>
+					<logger level="INFO" doc:name="Logger" doc:id="2485ab5d-e22a-46c4-be42-fe2d87c071c8" message='#["exists= " ++ vars.exists]'/>
+				</batch:step>
+				<batch:step name="writeToSalesforce" doc:id="2cf087f9-1ed8-45aa-8129-57d5755793fe" acceptExpression="#[ not vars.exists]">
+					<batch:aggregator doc:name="Batch Aggregator" doc:id="10d0b02f-ea2c-4c7c-bf1c-b0dc9ca5481a" size="3">
+						<salesforce:create type="Account" doc:name="Accounts" doc:id="08e8ffbb-ac39-4c16-8683-1adea834a763" config-ref="Salesforce_Config" />
+						<logger level="INFO" doc:name="Logger" doc:id="551e9da1-fab9-4c79-a4d8-9580f48ae270" />
+					</batch:aggregator>
+				</batch:step>
+			</batch:process-records>
+			<batch:on-complete >
+				<logger level="INFO" doc:name="Logger" doc:id="81fd80e0-13b1-4ba6-b878-8657d89dc888" />
+			</batch:on-complete>
+		</batch:job>
 		<logger level="INFO" doc:name="payload" doc:id="a58f7f9a-e46b-43a6-9fc1-9502a3cbe5c7" message="#[payload]"/>
 	</flow>
-	<flow name="syncDBaccountsWithPostal" doc:id="67f1a3df-9070-42f6-bb22-9a532bdee1c5" initialState="stopped">
+	<flow name="syncDBaccountsWithPostal" doc:id="67f1a3df-9070-42f6-bb22-9a532bdee1c5" initialState="started">
 		<scheduler doc:name="Scheduler" doc:id="a1324e3c-3d8a-4cef-98a4-7e42b007c8c5" >
 			<scheduling-strategy >
 				<fixed-frequency frequency="10" timeUnit="SECONDS"/>
