@@ -5,3 +5,13 @@ sfdc:
   username: "lsushmitha@njclabs.com"
   password: "Sushmitha@2694"
   token: "Ju6JmyJu3YUtIFyAKQpaCsw6"
+  
+file:
+  accountsDir: "D:/Work/MuleSoft_Training/MUFundamentals4.3_studentFiles_12may2020/MUFundamentals4.3_studentFiles_12may2020/resources"
+ 
+db:
+  host: "mudb.learn.mulesoft.com"
+  port: "3306"
+  user: "mule"
+  password: "mule"
+  database: "training"
