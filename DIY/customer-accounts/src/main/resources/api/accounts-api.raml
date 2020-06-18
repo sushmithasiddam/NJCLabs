@@ -1,0 +1,77 @@
+#%RAML 1.0
+title: Accounts API
+
+types:
+  Account: !include /dataTypes/AccountDataType.raml
+
+/accounts:
+  get:
+    displayName: Get All Accounts
+    description: Retrieves all accounts of specific type based on query parameters
+    headers:
+      Requester-ID:
+        displayName: Requester ID
+        description: ID of person requesting information
+        type: string
+        required: true
+    queryParameters:
+      type:
+        displayName: Account Type
+        description: Type of Account (personal or business)
+        type: string
+        enum:
+          - personal
+          - business
+      name:
+        displayName: Name
+        description: Name of account owner
+        required: false
+        type: string
+      country:
+        displayName: Owner's country
+        description: Country of residence of account owner
+        required: false
+        type: string
+    responses:
+      200:
+        description: Success
+        body:
+          application/json:
+            type: Account[]
+            examples:
+              output: !include /examples/AccountsExample.raml
+      400:
+        description: Bad Request
+        body:
+          application/json:
+            example:
+              message: Account retrieval unsuccessful
+
+  post:
+    displayName: Add accounts
+    description: Creates new accounts to the system based on given array of Account objects 
+    headers:
+      Requester-ID:
+        displayName: Requester ID
+        description: ID of person requesting information
+        type: string
+        required: true
+    body:
+      application/json:
+        description: Payload should be array of Account objects.
+        type: Account[]
+        examples:
+          output: !include /examples/AccountsNoIDExample.raml
+    responses:
+      201:
+        description: Success
+        body:
+          application/json:
+            example:
+              message: Account created (but not really)
+      400:
+        description: Bad Request
+        body:
+          application/json:
+            example:
+              message: Error creating accounts.
