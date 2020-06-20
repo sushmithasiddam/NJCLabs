@@ -33,7 +33,7 @@ payload map ( payload01 , indexOfPayload01 ) -> {
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="1e336fa7-1e19-41be-889d-f00a49e1e080" message="#[payload]"/>
 	</flow>
-	<flow name="getAccount" doc:id="7de119d6-3341-441d-84ac-285c7e4a5bab" >
+	<flow name="getAccountByID" doc:id="7de119d6-3341-441d-84ac-285c7e4a5bab" >
 		<db:select doc:name="Retrieve account" doc:id="a7bef264-99a0-4e54-8c67-4be788f28e07" config-ref="Database_Config">
 			<db:sql ><![CDATA[SELECT * FROM flights_customers
 WHERE accountID = :inputAccountID]]></db:sql>

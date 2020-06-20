@@ -176,7 +176,7 @@ output application/json
                 <ee:set-variable variableName="id">attributes.uriParams.'id'</ee:set-variable>
             </ee:variables>
         </ee:transform>
-		<flow-ref doc:name="Flow Reference" doc:id="6489b48f-c03a-4d97-b6b4-8254ed3c98c1" name="getAccount"/>
+		<flow-ref doc:name="Flow Reference" doc:id="6489b48f-c03a-4d97-b6b4-8254ed3c98c1" name="getAccountByID"/>
     </flow>
     <flow name="delete:\accounts\(id):accounts-api-2-config">
         <ee:transform xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core">
