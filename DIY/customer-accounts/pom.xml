@@ -73,8 +73,8 @@
         </dependency>
     	<dependency>
             <groupId>62d6eac2-d51c-4bc7-922e-107cb390d52f</groupId>
-            <artifactId>accounts</artifactId>
-            <version>1.0.1</version>
+            <artifactId>accounts-api</artifactId>
+            <version>1.0.3</version>
             <classifier>raml</classifier>
             <type>zip</type>
         </dependency>

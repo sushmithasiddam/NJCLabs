@@ -6,8 +6,8 @@
 http://www.mulesoft.org/schema/mule/db http://www.mulesoft.org/schema/mule/db/current/mule-db.xsd
 http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
 http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
-	<flow name="implementationFlow" doc:id="1dc585fc-28f1-4de2-89a3-f9e670120714" >
-		<db:select doc:name="Retrieve account data" doc:id="43d128a4-cd56-4fb3-8455-b1eeae92b838" config-ref="Database_Config">
+	<flow name="getAllAccounts" doc:id="1dc585fc-28f1-4de2-89a3-f9e670120714" >
+		<db:select doc:name="Retrieve all accounts data" doc:id="43d128a4-cd56-4fb3-8455-b1eeae92b838" config-ref="Database_Config">
 			<db:sql><![CDATA[SELECT * FROM flights_customers
 WHERE accountType = :accountType;]]></db:sql>
 			<db:input-parameters><![CDATA[#[{ accountType : message.attributes.queryParams."type" }]]]></db:input-parameters>
@@ -20,7 +20,7 @@ output application/json
 payload map ( payload01 , indexOfPayload01 ) -> {
 	ID: payload01.accountID default "",
 	firstName: (payload01.name as String splitBy " " )[0] default "",
-	lastName: (payload.name as String splitBy " ")[1] default "",
+	lastName: (payload01.name as String splitBy " ")[1] default "",
 	address : ((payload01.street as String) ++ ", " ++ (payload01.city as String) ++ ", " ++ (payload01.state as String)) default "",
 	postal: payload01.postal default "",
 	country: payload01.country default "",
@@ -32,5 +32,31 @@ payload map ( payload01 , indexOfPayload01 ) -> {
 			</ee:message>
 		</ee:transform>
 		<logger level="INFO" doc:name="Logger" doc:id="1e336fa7-1e19-41be-889d-f00a49e1e080" message="#[payload]"/>
+	</flow>
+	<flow name="getAccount" doc:id="7de119d6-3341-441d-84ac-285c7e4a5bab" >
+		<db:select doc:name="Retrieve account" doc:id="a7bef264-99a0-4e54-8c67-4be788f28e07" config-ref="Database_Config">
+			<db:sql ><![CDATA[SELECT * FROM flights_customers
+WHERE accountID = :inputAccountID]]></db:sql>
+			<db:input-parameters ><![CDATA[#[{ "inputAccountID" : attributes.uriParams.'id' }]]]></db:input-parameters>
+		</db:select>
+		<ee:transform doc:name="Transform Message" doc:id="a370374f-bf3b-4b54-ad89-7b93284c6029" >
+			<ee:message >
+				<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{(payload map (payload01, index) ->{
+	ID: payload01.accountID default "",
+	firstName: (payload01.name as String splitBy ' ')[0] default "",
+	lastName: (payload01.name as String splitBy ' ')[1] default "",
+	address: ((payload01.street as String) ++ ", " ++ (payload01.city as String) ++ ", " ++ (payload01.state as String)) default "", 
+	postal: payload01.postal default "",
+	country: payload01.country default "",
+	miles: payload01.miles default 0,
+	creationDate: payload01.creationDate as String default "",
+	"type": payload01.accountType default ""
+})}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+		<logger level="INFO" doc:name="Logger" doc:id="6b16acc3-e1c2-47c0-99be-e6a9c5e5c0a9" message="#[payload]"/>
 	</flow>
 </mule>

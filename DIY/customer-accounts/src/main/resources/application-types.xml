@@ -8,12 +8,38 @@ type accounts_json = Array<{|  ID: String,   firstName: String,   lastName: Stri
 
 ]]></types:shape>
     </types:type>
+    <types:type name="account_json" format="json">
+      <types:shape format="weave" example="examples/account-json.json"><![CDATA[%dw 2.0
+
+type account_json = {|
+  ID: String, 
+  firstName: String, 
+  lastName: String, 
+  address: String, 
+  postal: String, 
+  country: String, 
+  miles: Number {"typeId": "int"}, 
+  creationDate: String, 
+  "type": String
+|} {"example": "{\\\"ID\\\":\\\"1\\\",\\\"firstName\\\":\\\"Jane\\\",\\\"lastName\\\":\\\"Doe\\\",\\\"address\\\":\\\"West Melbourne\\\",\\\"postal\\\":\\\"3003\\\",\\\"country\\\":\\\"Australia\\\",\\\"miles\\\":236,\\\"creationDate\\\":\\\"2020-05-25T16:17:18Z\\\",\\\"type\\\":\\\"personal\\\"}"}
+
+]]></types:shape>
+    </types:type>
   </types:catalog>
   <types:enrichment select="#3fbcb69b-1367-4ccb-a20b-4032892cf584">
     <types:processor-declaration>
       <types:output-event>
         <types:message>
           <types:payload type="accounts_json"/>
+        </types:message>
+      </types:output-event>
+    </types:processor-declaration>
+  </types:enrichment>
+  <types:enrichment select="#a370374f-bf3b-4b54-ad89-7b93284c6029">
+    <types:processor-declaration>
+      <types:output-event>
+        <types:message>
+          <types:payload type="account_json"/>
         </types:message>
       </types:output-event>
     </types:processor-declaration>
