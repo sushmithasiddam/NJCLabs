@@ -29,15 +29,15 @@
 				<artifactId>mule-maven-plugin</artifactId>
 				<version>${mule.maven.plugin.version}</version>
 				<extensions>true</extensions>
-				<configuration>
-				<sharedLibraries>
+			<configuration>
+                    <sharedLibraries>
                         <sharedLibrary>
                             <groupId>mysql</groupId>
                             <artifactId>mysql-connector-java</artifactId>
                         </sharedLibrary>
                     </sharedLibraries>
                 </configuration>
-			</plugin>
+            </plugin>
 		</plugins>
 	</build>
 
@@ -67,16 +67,22 @@
             <classifier>mule-plugin</classifier>
         </dependency>
     	<dependency>
-            <groupId>mysql</groupId>
-            <artifactId>mysql-connector-java</artifactId>
-            <version>5.1.48</version>
-        </dependency>
-    	<dependency>
             <groupId>62d6eac2-d51c-4bc7-922e-107cb390d52f</groupId>
             <artifactId>accounts-api</artifactId>
             <version>1.0.3</version>
             <classifier>raml</classifier>
             <type>zip</type>
+        </dependency>
+    	<dependency>
+            <groupId>org.mule.connectors</groupId>
+            <artifactId>mule-wsc-connector</artifactId>
+            <version>1.5.8</version>
+            <classifier>mule-plugin</classifier>
+        </dependency>
+    	<dependency>
+            <groupId>mysql</groupId>
+            <artifactId>mysql-connector-java</artifactId>
+            <version>8.0.20</version>
         </dependency>
     </dependencies>
 
