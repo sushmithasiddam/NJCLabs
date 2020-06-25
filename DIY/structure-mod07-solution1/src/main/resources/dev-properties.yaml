@@ -1,0 +1,13 @@
+http:
+  host: "0.0.0.0"
+  port: "8081"
+  
+american:
+  url: "mu.learn.mulesoft.com"
+  port: "80"
+  path: "/american"
+  op: "GET"
+  
+local:
+  path: "/processData"
+  op: "POST"
