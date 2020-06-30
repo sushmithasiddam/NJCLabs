@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<mule xmlns:ee="http://www.mulesoft.org/schema/mule/ee/core" xmlns:http="http://www.mulesoft.org/schema/mule/http"
+	xmlns="http://www.mulesoft.org/schema/mule/core"
+	xmlns:doc="http://www.mulesoft.org/schema/mule/documentation" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.mulesoft.org/schema/mule/core http://www.mulesoft.org/schema/mule/core/current/mule.xsd
+http://www.mulesoft.org/schema/mule/http http://www.mulesoft.org/schema/mule/http/current/mule-http.xsd
+http://www.mulesoft.org/schema/mule/ee/core http://www.mulesoft.org/schema/mule/ee/core/current/mule-ee.xsd">
+	<flow name="mainFlow" doc:id="a63fc9bc-4860-4019-82b7-15ef83830243" >
+		<http:listener doc:name="Listener" doc:id="cc73d537-815c-413c-b3c2-f3846aa54e60" config-ref="HTTP_Listener_config" path="/flights_accounts"/>
+		<scatter-gather doc:name="Scatter-Gather" doc:id="f5e4cd1f-9f88-468a-99d8-087521356981" >
+			<route >
+				<flow-ref doc:name="accounts Flow" doc:id="0227d7d1-bb89-43bb-9be6-f65a66ea8808" name="accounts"/>
+			</route>
+			<route >
+				<flow-ref doc:name="flights Flow" doc:id="f6201335-0035-431c-b73c-d0d6b5739acb" name="flights"/>
+			</route>
+		</scatter-gather>
+		<choice doc:name="Choice" doc:id="1eeb72f2-d8ef-45f7-915f-6d94ee65bc82" >
+			<when expression="#[(isEmpty(payload[0].payload)) and (payload[1].payload.body.listAllFlightsResponse == null)]">
+				<ee:transform doc:name="Transform Message" doc:id="d992a8d7-96a1-427a-b641-2c11a0cbc0fb" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Accounts and Flights is empty."
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression="#[payload[1].payload.body.listAllFlightsResponse == null]">
+				<ee:transform doc:name="Transform Message" doc:id="3835e22e-968b-4eb4-a49b-73e8a704d0f9" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Flights is empty."
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<when expression="#[isEmpty(payload[0].payload)]">
+				<ee:transform doc:name="Transform Message" doc:id="6af6953f-1f0d-42a5-891a-4b13a9857bc1" >
+					<ee:message >
+						<ee:set-payload ><![CDATA[%dw 2.0
+output application/json
+---
+{
+	message: "Accounts is empty."
+}]]></ee:set-payload>
+					</ee:message>
+				</ee:transform>
+			</when>
+			<otherwise >
+				<ee:transform doc:name="Transform Message" doc:id="a281ba97-fee2-49e9-a14f-f40ff0ae1381">
+			<ee:message>
+				<ee:set-payload><![CDATA[%dw 2.0
+output application/json
+---
+{
+	accounts:{
+		attributes: payload[0].attributes,
+		payload: payload[0].payload
+	},
+	flights:{
+		attributes: payload[1].attributes,
+		payload: payload[1].payload.body
+	}
+}]]></ee:set-payload>
+			</ee:message>
+		</ee:transform>
+			</otherwise>
+		</choice>
+		<logger level="INFO" doc:name="Logger" doc:id="2abb4d5b-1d24-44f0-a09e-70f3840eae3d" message="#[payload]"/>
+	</flow>
+</mule>
